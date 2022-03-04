@@ -1,1 +1,3 @@
 *.dll
+release/
+.github/*.org
