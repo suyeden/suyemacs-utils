@@ -3,7 +3,7 @@
 ;; Copyright (C) 2021 suyeden
 
 ;; Author: suyeden
-;; Version: 1.0.0
+;; Version: 2.0.0
 ;; Keywords: lisp, extensions, convenience
 ;; Package-Requires: ((emacs "27.1"))
 
@@ -70,20 +70,28 @@ DOS窓から得た入力値のような raw-text をバッファ内に挿入す�
   (let ((coding-system-for-write 'utf-8))
     (save-buffer)))
 
-(defun my-read-string (str eprintf-dir-path)
+(defun my-read-string (str)
   "raw-text対策用入力関数
-質問として出力したい文字列と、eprintf.dll のあるディレクトリのパスを指定する
+質問として出力したい文字列を指定する
 コマンドプロンプトから入力値を得るようなケース（raw-text のやり取りがあるケース）において重宝する"
   (let ((current-coding-system nil)
-        (filename nil))
-    (let ((result nil))
+        (filename nil)
+        (result nil)
+        (tmp-dir nil))
+    (with-temp-buffer
+      (insert (shell-command-to-string "echo %TMP%"))
+      (goto-char (point-min))
+      (save-excursion
+        (while (search-forward "\\" nil t)
+          (replace-match "/")))
+      (setq tmp-dir (buffer-substring (point) (progn (end-of-line) (point)))))                                                                              
     (if (string= "windows-nt" (format "%s" system-type))
         (let ((my-answer nil)
               (my-tmp-file nil))
           ;; とりあえず入力値の文字コード変換
-          (my-print str eprintf-dir-path)
+          (my-print str)
           (setq my-answer (read-string ""))
-          (setq my-tmp-file (format ".my-read-str-%s.txt" (eval (cons '+ (current-time)))))
+          (setq my-tmp-file (expand-file-name (format ".my-read-str-%s.txt" (eval (cons '+ (current-time)))) tmp-dir))
           (find-file my-tmp-file)
           (insert my-answer)
           (let ((coding-system-for-write 'utf-8))
@@ -98,7 +106,7 @@ DOS窓から得た入力値のような raw-text をバッファ内に挿入す�
           (delete-file my-tmp-file)
           (my-del-extra-file my-tmp-file))
       (setq result (read-string (format "%s" str))))
-    result)))
+    result))
 
 (defun my-shell-command-to-string (arg)
   "シェルコマンド実行関数
@@ -124,16 +132,24 @@ Windows では内部文字コードに cp932 (shift_jis) を使用するソフ�
           (coding-system-for-write 'utf-8))
       (start-process-shell-command my-process-name my-buffer-name my-command))))
 
-(defun my-print (arg eprintf-dir-path)
+(defun my-print (arg)
   "Windows用標準出力関数
-出力したい文字列と、eprintf.dll のあるディレクトリのパスを指定する"
-  (let ((my-print-filename nil)
+出力したい文字列を指定する"
+  (let ((tmp-dir nil)
+        (my-print-filename nil)
         (output-str nil)
         (current-coding-system nil)
         (eprintf-filename nil))
     (with-temp-buffer
+      (insert (shell-command-to-string "echo %TMP%"))
+      (goto-char (point-min))
+      (save-excursion
+        (while (search-forward "\\" nil t)
+          (replace-match "/")))
+      (setq tmp-dir (buffer-substring (point) (progn (end-of-line) (point)))))
+    (with-temp-buffer
       (setq current-coding-system buffer-file-coding-system))
-    (setq my-print-filename (expand-file-name (format ".my-print-%s.txt" (eval (cons '+ (current-time)))) eprintf-dir-path))
+    (setq my-print-filename (expand-file-name (format ".my-print-%s.txt" (eval (cons '+ (current-time)))) tmp-dir))
     (find-file my-print-filename)
     (setq require-final-newline nil)
     (insert arg)
@@ -144,7 +160,7 @@ Windows では内部文字コードに cp932 (shift_jis) を使用するソフ�
       (setq output-str (buffer-substring (point) (progn (end-of-line) (point))))
       (prefer-coding-system 'cp932)
       (set-default 'buffer-file-coding-system 'cp932)
-      (setq eprintf-filename (expand-file-name (format ".eprintf-%s.txt" (eval (cons '+ (current-time)))) eprintf-dir-path))
+      (setq eprintf-filename (expand-file-name (format ".eprintf-%s.txt" (eval (cons '+ (current-time)))) tmp-dir))
       (find-file eprintf-filename)
       (setq require-final-newline nil)
       (insert output-str)

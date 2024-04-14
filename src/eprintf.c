@@ -49,7 +49,7 @@ emacs_value eprintf(emacs_env* env, ptrdiff_t nargs, emacs_value* args, void* da
   tmp_file_contents[0] = '\0';
   tmp_file = fopen(tmp_filename, "r");
   if (tmp_file == NULL) {
-    printf("ファイルが開けません。\n");
+    printf("File Open Failed\n");
     exit(1);
   }
   fgetws(tmp_file_contents, 256, tmp_file);

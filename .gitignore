@@ -1,3 +1,2 @@
-*.dll
+src/*.dll
 release/
-.github/*.org
