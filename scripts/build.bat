@@ -1,5 +1,6 @@
 @echo off
 
+set current_dir=%CD%
 set script_dir=%~dp0
 cd %script_dir%\..\src
 
@@ -19,3 +20,5 @@ copy .\eprintf.dll ..\release\eprintf.dll
 copy .\master-lib.el ..\release\master-lib.el
 
 powershell compress-archive ..\release\* ..\release\master-lib
+
+cd %current_dir%
