@@ -1,9 +1,9 @@
 ;;; master-lib.el --- collection of useful elisp functions -*- Emacs-Lisp -*-
 
-;; Copyright (C) 2021 suyeden
+;; Copyright (C) 2024 suyeden
 
 ;; Author: suyeden
-;; Version: 2.0.0
+;; Version: 2.1.0
 ;; Keywords: lisp, extensions, convenience
 ;; Package-Requires: ((emacs "27.1"))
 
@@ -60,7 +60,7 @@
     (setq locale-coding-system 'utf-8)))
 
 (defun my-save-buffer ()
-  "文字コードをutf-8に指定してカレントバッファを保存する
+  "文字コードをutf-8に指定してカレントバッファを保存する（保存時に、バックアップファイルのような自動生成ファイルは削除する）
 本関数はバッファ内容に変更があれば適用され、一度他の文字コードで保存されたバッファ（ファイル）であったとしても utf-8 として保存してくれる
 なお、DOS窓（文字コードが cp932）から渡される入力値は文字コード変換が行われていない raw-text であり、raw-text を含んだバッファは保存の度にバッファ内文字列に対して文字コード変換が行われるため、そのままバッファ（ファイル）内に挿入すると既に文字コード変換が行われている文字列に対しても文字コード変換が行われてしまい、文字化けが起こる
 また、raw-text の文字コード変換の際には文字コードの指定が効かず、指定しても「DOS窓（文字コードが cp932）から渡された raw-text なら cp932 に変換」というような変換が自動でなされる（指定しなかった場合は使用する文字コードを聞かれる）
@@ -68,7 +68,8 @@
 DOS窓から得た入力値のような raw-text をバッファ内に挿入する場合は、入力値を一時ファイルに挿入・保存するなどして一度入力値を何らかの文字コードに変換してから、該当文字列をコピーすることで、スムーズな文字コード変換・移行が行われるようになる
 これはバッファへの挿入や保存といった場面だけでなく、関数の引数として渡したりするような場合においても有効な手段である"
   (let ((coding-system-for-write 'utf-8))
-    (save-buffer)))
+    (save-buffer)
+    (my-del-extra-file (buffer-file-name))))
 
 (defun my-read-string (str)
   "raw-text対策用入力関数
