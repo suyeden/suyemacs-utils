@@ -17,8 +17,8 @@ if exist ..\release (
 mkdir ..\release
 
 copy .\eprintf.dll ..\release\eprintf.dll
-copy .\master-lib.el ..\release\master-lib.el
+copy .\suyemacs-utils.el ..\release\suyemacs-utils.el
 
-powershell compress-archive ..\release\* ..\release\master-lib
+powershell compress-archive ..\release\* ..\release\suyemacs-utils
 
 cd %current_dir%

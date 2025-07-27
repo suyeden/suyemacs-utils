@@ -1,9 +1,9 @@
-;;; master-lib.el --- collection of useful elisp functions -*- Emacs-Lisp -*-
+;;; suyemacs-utils.el --- collection of useful elisp functions -*- Emacs-Lisp -*-
 
-;; Copyright (C) 2024 suyeden
+;; Copyright (C) 2024-2025 suyeden
 
 ;; Author: suyeden
-;; Version: 2.1.0
+;; Version: 3.0.0
 ;; Keywords: lisp, extensions, convenience
 ;; Package-Requires: ((emacs "27.1"))
 
@@ -24,10 +24,10 @@
 
 ;;; Commentary:
 
-;; master-lib は、すえーでんが作成した、便利な自作 Emacs Lisp 関数をまとめたライブラリです。
+;; suyemacs-utils は、すえーでんが作成した、便利な自作 Emacs Lisp 関数をまとめたライブラリです。
 ;; 主に Windows マシン上で、 '--script' オプションを用いるときに利用されることを想定しています。
 ;;
-;; 'master-lib.el' is the collection of useful Emacs Lisp functions written by suyeden.
+;; 'suyemacs-utils.el' is the collection of useful Emacs Lisp functions written by suyeden.
 ;; This program is mainly intended for use in scripts which run with Batch Mode ('--script' option) from command line.
 
 ;;; Code:
@@ -506,4 +506,4 @@ Windows では内部文字コードに cp932 (shift_jis) を使用するソフ�
       (setq all-files-list (cdr all-files-list)))
     (setq result (reverse result))
     result))
-;;; my-elisp-util.el ends here
+;;; suyemacs-utils.el ends here
